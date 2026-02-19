@@ -20,6 +20,15 @@ public class DataSaved : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        // SOUND
+        audioMixer = FindAnyObjectByType<AudioMixer>();
+        soundSlider = GameObject.FindWithTag("SoundSlider").GetComponent<Slider>();
+        musicSlider = GameObject.FindWithTag("MusicSlider").GetComponent<Slider>();
+
+        // RESOLUTION
+        resolutionDropdown = GameObject.FindWithTag("ResolutionDropdown").GetComponent<TMP_Dropdown>();
+
     }
 
     [Header("Audio Settings")]
@@ -37,13 +46,11 @@ public class DataSaved : MonoBehaviour
     private Resolution[] resolutionsAvailable;
     private int savedResolutionIndex;
 
+    private TMP_Dropdown StartDropdown;
+
+
     private void Start()
     {
-        
-        // SOUND
-        audioMixer = FindAnyObjectByType<AudioMixer>();
-        soundSlider = GameObject.FindWithTag("SoundSlider").GetComponent<Slider>();
-        musicSlider = GameObject.FindWithTag("MusicSlider").GetComponent<Slider>();
 
         // Load saved settings or set defaults
         savedSound = PlayerPrefs.GetFloat("Sound", 1f);
@@ -60,9 +67,6 @@ public class DataSaved : MonoBehaviour
         soundSlider.onValueChanged.AddListener((volume) => ApplyVolume("Sound", volume));
         musicSlider.onValueChanged.AddListener((volume) => ApplyVolume("Music", volume));
 
-
-        // RESOLUTION
-        resolutionDropdown = GameObject.FindWithTag("ResolutionDropdown").GetComponent<TMP_Dropdown>();
 
         // Get available resolutions and populate dropdown
         resolutionsAvailable = Screen.resolutions;
@@ -82,8 +86,8 @@ public class DataSaved : MonoBehaviour
         ApplyResolution(savedResolutionIndex);
 
 
+
     }
-    
 
     public void ApplyVolume(string parameter, float volume)
     {

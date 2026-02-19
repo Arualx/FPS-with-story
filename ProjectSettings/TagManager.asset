@@ -7,6 +7,11 @@ TagManager:
   - Bullet
   - Enemy
   - Gun
+  - MusicSlider
+  - ResolutionDropdown
+  - SoundSlider
+  - StartDropdown
+  - SettingsDropdown
   layers:
   - Default
   - TransparentFX

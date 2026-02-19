@@ -7,6 +7,19 @@ using UnityEngine.SceneManagement;
 public class MainMenuScript : MonoBehaviour
 {
 
+    private GameObject StartDropdown;
+    private GameObject SettingsDropdown;
+
+    public void Awake()
+    {
+        StartDropdown = GameObject.FindWithTag("StartDropdown");
+        StartDropdown.SetActive(false);
+
+        SettingsDropdown = GameObject.FindWithTag("SettingsDropdown");
+        SettingsDropdown.SetActive(false);
+    }
+
+
     public void StartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
@@ -17,5 +30,14 @@ public class MainMenuScript : MonoBehaviour
             Application.Quit();
     }
 
+    public void OpenStart()
+    {
+        StartDropdown.SetActive(!StartDropdown.activeSelf);
+    }
+
+    public void OpenSettings()
+    {
+        SettingsDropdown.SetActive(!SettingsDropdown.activeSelf);
+    }
 
 }
