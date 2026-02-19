@@ -22,7 +22,6 @@ public class DataSaved : MonoBehaviour
         }
 
         // SOUND
-        audioMixer = FindAnyObjectByType<AudioMixer>();
         soundSlider = GameObject.FindWithTag("SoundSlider").GetComponent<Slider>();
         musicSlider = GameObject.FindWithTag("MusicSlider").GetComponent<Slider>();
 
@@ -38,7 +37,7 @@ public class DataSaved : MonoBehaviour
     private float savedMusic;
     private Slider musicSlider;
 
-    private AudioMixer audioMixer;
+    [SerializeField] private AudioMixer audioMixer;
 
     [Header("Other Settings")]
 

@@ -12,6 +12,8 @@ TagManager:
   - SoundSlider
   - StartDropdown
   - SettingsDropdown
+  - SettingsBackground
+  - AudioMixer
   layers:
   - Default
   - TransparentFX

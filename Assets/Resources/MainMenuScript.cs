@@ -10,6 +10,8 @@ public class MainMenuScript : MonoBehaviour
     private GameObject StartDropdown;
     private GameObject SettingsDropdown;
 
+    private GameObject SettingsBackground; 
+
     public void Awake()
     {
         StartDropdown = GameObject.FindWithTag("StartDropdown");
@@ -17,6 +19,9 @@ public class MainMenuScript : MonoBehaviour
 
         SettingsDropdown = GameObject.FindWithTag("SettingsDropdown");
         SettingsDropdown.SetActive(false);
+
+        SettingsBackground = GameObject.FindWithTag("SettingsBackground");
+        SettingsBackground.SetActive(false);
     }
 
 
