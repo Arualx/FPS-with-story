@@ -45,8 +45,6 @@ public class DataSaved : MonoBehaviour
     private Resolution[] resolutionsAvailable;
     private int savedResolutionIndex;
 
-    private TMP_Dropdown StartDropdown;
-
 
     private void Start()
     {

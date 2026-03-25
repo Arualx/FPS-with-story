@@ -13,12 +13,10 @@ public class Bullet : MonoBehaviour
     private float bulletSpeed = 20f;
     private float bulletLifeTime = 5f;
 
-    private bool onEnemy = false;
 
 
     void Awake()
     {
-        if (this.gameObject.CompareTag("Enemy")) onEnemy = true;
         rb = GetComponent<Rigidbody>();
         particle = hitEffect.GetComponent<ParticleSystem>();
     }
@@ -35,9 +33,9 @@ public class Bullet : MonoBehaviour
         {
             return;
         } 
-        else if (other.gameObject.CompareTag("Enemy") && !onEnemy || other.gameObject.CompareTag("Player") && onEnemy)
+        else if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("Player"))
         {
-            other.gameObject.GetComponent<TakingDamage>().TakeDamage(Random.Range(10, 40));
+            other.gameObject.GetComponent<TakingDamage>().TakeDamage(Random.Range(20,40));
         }
 
         //color based on hit object

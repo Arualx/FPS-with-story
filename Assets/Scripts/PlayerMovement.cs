@@ -6,27 +6,25 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     public static PlayerMovement instance;
+    [SerializeField] private MainData mainData;
 
-    [SerializeField] private Transform cameraPosition;
+
+    [SerializeField] public Transform cameraPosition;
 
     [SerializeField] private CharacterController characterController;
 
     private Vector3 movement;
-    private float gravitation = 1f;
+    private float gravitation;
 
-    private float playerWalkingSpeed = 10f;
-    private float playerRunningSpeed = 20f;
-    private bool isRunning = false;
+    private float playerWalkingSpeed;
+    private float playerRunningSpeed;
+    public bool isRunning = false;
 
     [SerializeField] private GameObject jumpSplash;
-    private float jumpStrenght = 5f;
+    private float jumpStrenght;
     private bool isGrounded;
     private bool jump = false;
     private bool doubleJump = false;
-
-    [SerializeField] private Transform shootPosition;
-    [SerializeField] private GameObject bullet;
-    private Vector3 shootDirection;
 
     private float headSpeed;
     private float headStrenght = 0.1f;
@@ -38,9 +36,6 @@ public class PlayerMovement : MonoBehaviour
 
     private float mouseSensitivity = 1.5f;
 
-    public int health = 100;
-
-    
     /*
     private InputActionMap actionMap;
     private InputAction walkAction;
@@ -50,8 +45,6 @@ public class PlayerMovement : MonoBehaviour
     private InputAction crouchAction;
     */
 
-
-
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -60,12 +53,19 @@ public class PlayerMovement : MonoBehaviour
         instance = this;
     }
 
+    private void Start()
+    {
+        playerWalkingSpeed = mainData.playerWalkingSpeed;
+        playerRunningSpeed = mainData.playerRunningSpeed;
+        gravitation = mainData.gravitation;
+        jumpStrenght = mainData.jumpStrenght;
+    }
+
     private void Update()
     {
         Movement();
         Rotation();
         HeadMovement();
-        Shooting();
     }
 
     private void Movement()
@@ -172,24 +172,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Shooting()
-    {
-        if (Input.GetMouseButtonDown(0) && !isRunning)
-        {
-            
-            if (Physics.Raycast(cameraPosition.transform.position, cameraPosition.transform.forward, out RaycastHit target, 30f))
-            {
-                shootDirection = target.point;
-            }
-            else
-            {
-                shootDirection = cameraPosition.transform.position + cameraPosition.transform.forward * 30f;
-            }
-
-            shootDirection = (shootDirection - shootPosition.position).normalized;
-            Instantiate(bullet, shootPosition.position, Quaternion.LookRotation(shootDirection));
-        }
-    }
+    
     
 
     /*

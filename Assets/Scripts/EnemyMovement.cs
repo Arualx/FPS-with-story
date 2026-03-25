@@ -28,7 +28,7 @@ public class EnemyMovement : MonoBehaviour
 
         if (distance <= distanceHit)
         {
-            player.GetComponent<TakingDamage>().TakeDamage(50f);
+            player.GetComponent<TakingDamage>().TakeDamage(50);
             rb.linearVelocity = Vector3.zero;
         }
         else if (distance <= distanceCatch)
