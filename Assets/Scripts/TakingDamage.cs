@@ -22,6 +22,10 @@ public class TakingDamage : MonoBehaviour
     private float healthDrainSpeed;
     private float healthDrainDelay;
     private Coroutine drainCoroutine;
+    private Coroutine healthBuild;
+
+
+    private float HealAmmount = 30;
 
     private void Start()
     {
@@ -53,6 +57,10 @@ public class TakingDamage : MonoBehaviour
             Destroy(Puddle, 5f);
         }
     }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E)) Heal();
+    }
 
     private IEnumerator HealthDrain()
     {
@@ -68,5 +76,33 @@ public class TakingDamage : MonoBehaviour
         drainCoroutine = null;
     }
 
+    public void Heal()
+    {
+        currentHealth += HealAmmount;
+        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+
+        healthFrontSlider.value = currentHealth;
+
+        if (healthBuild == null) healthBuild = StartCoroutine(HealthDrain());
+
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+    }
+
+    private IEnumerator HealthBuild()
+    {
+        yield return new WaitForSeconds(healthDrainDelay);
+
+        while (!Mathf.Approximately(healthBackSlider.value, currentHealth))
+        {
+            healthBackSlider.value = Mathf.MoveTowards(healthBackSlider.value, currentHealth, healthDrainSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        healthBackSlider.value = currentHealth;
+        healthBuild = null;
+    }
 
 }
