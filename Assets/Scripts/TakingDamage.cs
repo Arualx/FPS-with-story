@@ -6,6 +6,8 @@ public class TakingDamage : MonoBehaviour
 {
     [SerializeField] private MainData mainData;
 
+    private bool ThisPlayer;
+
     
 
     [Header("Effects")]
@@ -39,7 +41,15 @@ public class TakingDamage : MonoBehaviour
 
         healthFrontSlider.value = currentHealth;
         healthBackSlider.value = currentHealth;
+        if(transform.parent.gameObject.name == "Player") { ThisPlayer = true; }
+        else { ThisPlayer = false; }
     }
+
+    private void Update()
+    {
+        //if (Input.GetKeyDown(KeyCode.E) && ThisPlayer) Heal();
+    }
+
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
@@ -49,17 +59,18 @@ public class TakingDamage : MonoBehaviour
 
         if (drainCoroutine == null) drainCoroutine = StartCoroutine(HealthDrain());
 
-        if (currentHealth <= 0f)
+        if (currentHealth <= 0f && ThisPlayer)
         {
+            gameObject.SetActive(false);
+            currentHealth = 0;
+            GameManager.instance.playerDeath();
+        }
+        else if (currentHealth <= 0f && !ThisPlayer) {
             Destroy(transform.parent.gameObject);
             Instantiate(deathEffect, transform.position, transform.rotation);
             GameObject Puddle = Instantiate(deathPuddle, transform.parent.transform.position, transform.rotation);
             Destroy(Puddle, 5f);
         }
-    }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E)) Heal();
     }
 
     private IEnumerator HealthDrain()

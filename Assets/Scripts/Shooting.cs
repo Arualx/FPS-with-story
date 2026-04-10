@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
@@ -9,7 +11,6 @@ public class Shooting : MonoBehaviour
 {
     [SerializeField] private MainData mainData;
 
-    [SerializeField] private Transform shootPosition;
     [SerializeField] private GameObject bullet;
     private Vector3 shootDirection;
     [SerializeField] private bool automaticOn = false;
@@ -25,6 +26,10 @@ public class Shooting : MonoBehaviour
     [SerializeField] private GameObject AmmoLeftInMagazine;
     [SerializeField] private GameObject Ammo;
 
+    [SerializeField] private List<Transform> ShootPoints = new List<Transform>();
+    [SerializeField] private int SelectedWepon;
+    [SerializeField] private List<GameObject> Wepon = new List<GameObject>();
+
     private void Start()
     {
         maxBulletCount = mainData.maxBulletCount;
@@ -33,6 +38,9 @@ public class Shooting : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) { SelectedWepon = 0; Wepon[0].SetActive(true); Wepon[1].SetActive(false); Wepon[2].SetActive(false); automaticOn = false; }
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) { SelectedWepon = 1; Wepon[0].SetActive(false); Wepon[1].SetActive(true); Wepon[2].SetActive(false); automaticOn = true; }
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) { SelectedWepon = 2; Wepon[0].SetActive(false); Wepon[1].SetActive(false); Wepon[2].SetActive(true); automaticOn = false; }
         Shoot();
     }
 
@@ -61,8 +69,8 @@ public class Shooting : MonoBehaviour
             shootDirection = PlayerMovement.instance.cameraPosition.transform.position + PlayerMovement.instance.cameraPosition.transform.forward * 30f;
         }
 
-        shootDirection = (shootDirection - shootPosition.position).normalized;
-        Instantiate(bullet, shootPosition.position, Quaternion.LookRotation(shootDirection));
+        shootDirection = (shootDirection - ShootPoints[SelectedWepon].position).normalized;
+        Instantiate(bullet, ShootPoints[SelectedWepon].position, Quaternion.LookRotation(shootDirection));
     }
     private IEnumerator AutoShoot()
     {
@@ -76,12 +84,12 @@ public class Shooting : MonoBehaviour
             shootDirection = PlayerMovement.instance.cameraPosition.transform.position + PlayerMovement.instance.cameraPosition.transform.forward * 30f;
         }
         //Calculate projectile direction
-        shootDirection = (shootDirection - shootPosition.position).normalized;
+        shootDirection = (shootDirection - ShootPoints[SelectedWepon].position).normalized;
 
         //shoot
         currentBulletCount -= 1;
         AmmoLeftInMagazine.GetComponent<TextMeshProUGUI>().text = currentBulletCount.ToString();
-        Instantiate(bullet, shootPosition.position, Quaternion.LookRotation(shootDirection));
+        Instantiate(bullet, ShootPoints[SelectedWepon].position, Quaternion.LookRotation(shootDirection));
 
         yield return new WaitForSeconds(downTimeLenght);
 
