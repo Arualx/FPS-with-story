@@ -13,9 +13,9 @@ public class Shooting : MonoBehaviour
 
     [SerializeField] private GameObject bullet;
     private Vector3 shootDirection;
-    [SerializeField] private bool automaticOn = false;
+    private bool automaticOn = false;
 
-    [SerializeField] private int currentBulletCount  = 30;
+    private int currentBulletCount;
     private int currentMagazineBulletCount;
     private int maxBulletCount;
     private int maxMagazineBulletCount;
@@ -34,6 +34,10 @@ public class Shooting : MonoBehaviour
     {
         maxBulletCount = mainData.maxBulletCount;
         maxMagazineBulletCount = mainData.maxMagazineBulletCount;
+        currentBulletCount = maxBulletCount;
+        currentMagazineBulletCount = maxMagazineBulletCount;
+        AmmoLeftInMagazine.GetComponent<TextMeshProUGUI>().text = currentMagazineBulletCount.ToString();
+        Ammo.GetComponent<TextMeshProUGUI>().text = maxMagazineBulletCount.ToString();
     }
 
     private void Update()
@@ -48,10 +52,13 @@ public class Shooting : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !PlayerMovement.instance.isRunning)
         {
-            if (!automaticOn) { ManualShoot(); }
-            else if (automaticOn && currentBulletCount > 0) 
+            if (!automaticOn && currentMagazineBulletCount > 0) 
+            {
+                StartCoroutine(ManualShoot()); 
+            }
+            else if (automaticOn && currentMagazineBulletCount > 0) 
             { 
-                Debug.Log("Blackboard"); 
+                Debug.Log("Auto Shoot"); 
                 StartCoroutine(AutoShoot()); 
                 StillShooting = true;  
             }
@@ -59,7 +66,7 @@ public class Shooting : MonoBehaviour
         if (Input.GetMouseButtonUp(0) || PlayerMovement.instance.isRunning) { StillShooting = false; }
     }
 
-    private void ManualShoot(){
+    private IEnumerator ManualShoot(){
         if (Physics.Raycast(PlayerMovement.instance.cameraPosition.transform.position, PlayerMovement.instance.cameraPosition.transform.forward, out RaycastHit target, 30f))
         {
             shootDirection = target.point;
@@ -70,7 +77,16 @@ public class Shooting : MonoBehaviour
         }
 
         shootDirection = (shootDirection - ShootPoints[SelectedWepon].position).normalized;
+
+        currentBulletCount -= 1;
+        currentMagazineBulletCount -= 1;
+
+        AmmoLeftInMagazine.GetComponent<TextMeshProUGUI>().text = currentMagazineBulletCount.ToString();
         Instantiate(bullet, ShootPoints[SelectedWepon].position, Quaternion.LookRotation(shootDirection));
+
+        yield return new WaitForSeconds(2f);
+
+        if (currentMagazineBulletCount == 0 && currentBulletCount > 0) StartCoroutine(Reload());
     }
     private IEnumerator AutoShoot()
     {
@@ -88,34 +104,37 @@ public class Shooting : MonoBehaviour
 
         //shoot
         currentBulletCount -= 1;
-        AmmoLeftInMagazine.GetComponent<TextMeshProUGUI>().text = currentBulletCount.ToString();
+        currentMagazineBulletCount -= 1;
+
+        AmmoLeftInMagazine.GetComponent<TextMeshProUGUI>().text = currentMagazineBulletCount.ToString();
         Instantiate(bullet, ShootPoints[SelectedWepon].position, Quaternion.LookRotation(shootDirection));
 
         yield return new WaitForSeconds(downTimeLenght);
 
-        if (StillShooting && currentBulletCount > 0) StartCoroutine(AutoShoot());
-        else if(StillShooting && currentBulletCount == 0) StartCoroutine(Reload());
+        if (StillShooting && currentMagazineBulletCount > 0) StartCoroutine(AutoShoot());
+        else if(StillShooting && currentMagazineBulletCount == 0 && currentBulletCount > 0) StartCoroutine(Reload()); 
     }
 
     private IEnumerator Reload() {
         yield return new WaitForSeconds(1);
-        if (maxBulletCount > maxMagazineBulletCount)
+        if (currentMagazineBulletCount < maxMagazineBulletCount && currentBulletCount >= maxMagazineBulletCount)
         {
-            maxBulletCount -= maxMagazineBulletCount;
-            currentBulletCount = maxMagazineBulletCount;
+            currentMagazineBulletCount = maxMagazineBulletCount; 
+        }
+        else if (currentMagazineBulletCount < maxMagazineBulletCount && currentBulletCount < maxMagazineBulletCount)
+        {
+            currentMagazineBulletCount = currentBulletCount;
         }
         else
-        { 
-            currentBulletCount = maxBulletCount;
-            maxBulletCount = 0;
-        }
-        
+        {
+            currentMagazineBulletCount = maxMagazineBulletCount;
 
+        }
 
         //Displays
-        AmmoLeftInMagazine.GetComponent<TextMeshProUGUI>().text = currentBulletCount.ToString();
-        Ammo.GetComponent<TextMeshProUGUI>().text = maxBulletCount.ToString();
-        //ContinueShooting
+        AmmoLeftInMagazine.GetComponent<TextMeshProUGUI>().text = currentMagazineBulletCount.ToString();
+        
+        //ContinueShooting 
         if (StillShooting) { StartCoroutine(AutoShoot()); }
     }
 
